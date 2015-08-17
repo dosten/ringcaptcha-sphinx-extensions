@@ -16,7 +16,11 @@ def html_page_context(app, pagename, templatename, context, doctree):
         warnings.warn('edit_on_github_project not specified')
         return
 
-    path = os.path.relpath(doctree.get('source'), app.builder.srcdir)
+    docroot = app.config.edit_on_github_docroot
+    if docroot != '' and not docroot.endswith('/'):
+        docroot += '/'
+
+    path = docroot + os.path.relpath(doctree.get('source'), app.builder.srcdir)
     show_url = get_github_url(app, 'blob', path)
     edit_url = get_github_url(app, 'edit', path)
 
@@ -26,4 +30,5 @@ def html_page_context(app, pagename, templatename, context, doctree):
 def setup(app):
     app.add_config_value('edit_on_github_project', '', True)
     app.add_config_value('edit_on_github_branch', 'master', True)
+    app.add_config_value('edit_on_github_docroot', '', True)
     app.connect('html-page-context', html_page_context)
